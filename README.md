@@ -640,3 +640,4 @@ An accessible mobile application designed for marginal/tribal communities to bri
 ---
 
 *This wireframe prioritizes simplicity, accessibility, and local language support to effectively serve marginal and tribal communities.*
+

@@ -1,0 +1,12 @@
+{
+  "name": "tribal-app-local-testing",
+  "version": "1.0.0",
+  "description": "Local testing suite for Tribal App",
+  "scripts": {
+    "test": "node run-all-tests.js",
+    "test:lambdas": "node test-lambdas.js",
+    "test:mobile": "node test-mobile-services.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

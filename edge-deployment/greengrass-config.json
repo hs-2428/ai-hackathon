@@ -1,0 +1,29 @@
+{
+  "componentName": "com.tribal.app.offline",
+  "componentVersion": "1.0.0",
+  "description": "Offline AI assistant for tribal communities",
+  "platform": {
+    "os": "linux",
+    "architecture": "arm"
+  },
+  "lifecycle": {
+    "install": {
+      "script": "pip3 install -r requirements.txt"
+    },
+    "run": {
+      "script": "python3 offline_assistant.py"
+    }
+  },
+  "artifacts": [
+    {
+      "uri": "s3://tribal-app-models/offline-models.tar.gz",
+      "unarchive": "ZIP"
+    }
+  ],
+  "configuration": {
+    "languages": ["santali", "gondi", "bhili", "hindi"],
+    "modelPath": "/greengrass/v2/work/models",
+    "cachePath": "/greengrass/v2/work/cache",
+    "syncInterval": 86400
+  }
+}

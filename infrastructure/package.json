@@ -1,0 +1,21 @@
+{
+  "name": "tribal-app-infrastructure",
+  "version": "1.0.0",
+  "bin": {
+    "tribal-app": "bin/app.js"
+  },
+  "scripts": {
+    "build": "echo 'No build needed'",
+    "cdk": "cdk",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy",
+    "synth": "cdk synth"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.120.0",
+    "constructs": "^10.3.0"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.120.0"
+  }
+}

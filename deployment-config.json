@@ -1,0 +1,8 @@
+{
+  "apiEndpoint": "https://b52h5hjcc6.execute-api.us-east-1.amazonaws.com/prod/",
+  "audioBucket": "tribal-app-audio",
+  "knowledgeBucket": "tribal-app-knowledge",
+  "region": "us-east-1",
+  "accountId": "604223541745",
+  "deployedAt": "2026-03-07T21:14:50Z"
+}

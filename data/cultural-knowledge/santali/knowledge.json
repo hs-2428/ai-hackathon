@@ -1,0 +1,71 @@
+{
+  "language": "santali",
+  "languageCode": "sat",
+  "scripts": ["devanagari", "ol-chiki"],
+  "region": "Jharkhand, West Bengal, Odisha, Assam",
+  "population": "7.4 million",
+  "commonTopics": {
+    "greetings": {
+      "morning": "ᱥᱮᱛᱟᱜ ᱡᱚᱦᱟᱨ (Setag johar)",
+      "general": "ᱡᱚᱦᱟᱨ (Johar)",
+      "culturalNote": "Johar is the traditional Santali greeting showing respect"
+    },
+    "festivals": [
+      {
+        "name": "Sohrai",
+        "description": "Harvest festival celebrating cattle",
+        "season": "Winter (November)"
+      },
+      {
+        "name": "Baha Parab",
+        "description": "Spring festival celebrating flowers",
+        "season": "Spring (February-March)"
+      },
+      {
+        "name": "Karam",
+        "description": "Festival worshipping Karam tree",
+        "season": "Monsoon (August-September)"
+      }
+    ],
+    "governmentSchemes": [
+      {
+        "name": "Post Matric Scholarship for ST Students",
+        "eligibility": "Santali students pursuing higher education",
+        "benefit": "Financial assistance for education",
+        "howToApply": "Apply through National Scholarship Portal"
+      },
+      {
+        "name": "Van Dhan Vikas Yojana",
+        "eligibility": "Tribal forest dwellers",
+        "benefit": "Support for forest produce collection and marketing",
+        "howToApply": "Contact local TRIFED office"
+      },
+      {
+        "name": "PM-JANMAN Scheme",
+        "eligibility": "Particularly Vulnerable Tribal Groups",
+        "benefit": "Housing, education, health facilities",
+        "howToApply": "Through district tribal welfare office"
+      }
+    ],
+    "healthInfo": {
+      "commonConcerns": ["Malaria", "Anemia", "Malnutrition"],
+      "ayushmanBharat": "Free health insurance up to ₹5 lakh for tribal families"
+    },
+    "agriculture": {
+      "crops": ["Rice", "Maize", "Pulses", "Vegetables"],
+      "schemes": ["PM-KISAN", "Soil Health Card", "Kisan Credit Card"]
+    }
+  },
+  "culturalValues": [
+    "Community living and collective decision making",
+    "Respect for nature and environment",
+    "Oral tradition and storytelling",
+    "Music and dance as integral to life"
+  ],
+  "communicationStyle": {
+    "preferred": "Simple, direct language",
+    "avoid": "Complex bureaucratic terms",
+    "useExamples": true,
+    "respectElders": true
+  }
+}

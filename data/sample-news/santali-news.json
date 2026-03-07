@@ -1,0 +1,42 @@
+[
+  {
+    "id": "news-1",
+    "title": "New Scholarship Program for Tribal Students",
+    "content": "The government has announced a new scholarship program specifically for tribal students pursuing higher education. The program offers financial assistance up to ₹50,000 per year.",
+    "category": "education",
+    "source": "Ministry of Tribal Affairs",
+    "timestamp": 1709827200000
+  },
+  {
+    "id": "news-2",
+    "title": "Forest Rights Act Implementation Update",
+    "content": "District administration has started accepting new applications under the Forest Rights Act. Tribal communities can now claim their traditional forest land rights.",
+    "category": "rights",
+    "source": "District Administration",
+    "timestamp": 1709740800000
+  },
+  {
+    "id": "news-3",
+    "title": "Free Health Checkup Camp in Tribal Areas",
+    "content": "A free health checkup camp will be organized in tribal villages next week. Services include general health screening, eye checkup, and medicine distribution.",
+    "category": "health",
+    "source": "Health Department",
+    "timestamp": 1709654400000
+  },
+  {
+    "id": "news-4",
+    "title": "Agricultural Training Program Announced",
+    "content": "A 5-day training program on modern farming techniques will be conducted for tribal farmers. Topics include organic farming, water conservation, and crop diversification.",
+    "category": "agriculture",
+    "source": "Agriculture Department",
+    "timestamp": 1709568000000
+  },
+  {
+    "id": "news-5",
+    "title": "Van Dhan Vikas Kendras Expansion",
+    "content": "New Van Dhan Vikas Kendras are being established to help tribal communities process and market forest produce. This will create employment and increase income.",
+    "category": "livelihood",
+    "source": "TRIFED",
+    "timestamp": 1709481600000
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "language": "gondi",
+  "languageCode": "gon",
+  "scripts": ["devanagari", "telugu"],
+  "region": "Madhya Pradesh, Maharashtra, Chhattisgarh, Telangana",
+  "population": "3 million",
+  "commonTopics": {
+    "greetings": {
+      "general": "जोहार (Johar)",
+      "culturalNote": "Respectful greeting in Gondi culture"
+    },
+    "festivals": [
+      {
+        "name": "Madai Festival",
+        "description": "Annual fair celebrating local deities",
+        "season": "Winter-Spring"
+      },
+      {
+        "name": "Dussehra",
+        "description": "Major festival with unique Gondi traditions",
+        "season": "October"
+      }
+    ],
+    "governmentSchemes": [
+      {
+        "name": "Forest Rights Act (FRA)",
+        "eligibility": "Gondi forest dwellers",
+        "benefit": "Land rights and forest resource access",
+        "howToApply": "Through Gram Sabha and Forest Rights Committee"
+      },
+      {
+        "name": "Tribal Sub-Plan",
+        "eligibility": "Gondi communities",
+        "benefit": "Development programs for tribal areas",
+        "howToApply": "Contact district tribal welfare office"
+      },
+      {
+        "name": "Scholarship for Tribal Students",
+        "eligibility": "Gondi students",
+        "benefit": "Educational financial support",
+        "howToApply": "National Scholarship Portal"
+      }
+    ],
+    "healthInfo": {
+      "commonConcerns": ["Sickle cell anemia", "Malaria", "Tuberculosis"],
+      "ayushmanBharat": "Free health coverage for tribal families"
+    },
+    "agriculture": {
+      "crops": ["Paddy", "Millets", "Pulses", "Oilseeds"],
+      "schemes": ["MGNREGA", "PM-KISAN", "Tribal Development Programs"]
+    }
+  },
+  "culturalValues": [
+    "Strong connection to forest and land",
+    "Clan-based social structure",
+    "Oral history and folklore",
+    "Traditional governance systems"
+  ],
+  "communicationStyle": {
+    "preferred": "Story-based explanations",
+    "avoid": "Technical jargon",
+    "useLocalExamples": true,
+    "respectTraditions": true
+  }
+}

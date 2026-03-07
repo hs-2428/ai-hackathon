@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tribal Language AI Assistant - Demo</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
+        h1 { color: #1565C0; }
+        .test-section { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        button { background: #1565C0; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0d47a1; }
+        .result { background: white; padding: 15px; margin-top: 10px; border-left: 4px solid #4CAF50; white-space: pre-wrap; }
+        .loading { color: #FF6F00; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Tribal Language AI Assistant</h1>
+    <p>Live demo of AI-powered voice assistant for tribal communities</p>
+
+    <div class="test-section">
+        <h2>1. Language Detection</h2>
+        <input type="text" id="langText" placeholder="Enter text in any language (e.g., नमस्ते)" value="नमस्ते, मुझे सरकारी योजनाओं के बारे में बताएं">
+        <button onclick="testLanguage()">Detect Language</button>
+        <div id="langResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. AI Cultural Assistant</h2>
+        <textarea id="aiQuery" rows="3" placeholder="Ask a question...">What education scholarships are available for tribal students?</textarea>
+        <button onclick="testAI()">Ask AI Assistant</button>
+        <div id="aiResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. News Aggregator</h2>
+        <select id="newsLang">
+            <option value="santali">Santali</option>
+            <option value="hindi">Hindi</option>
+            <option value="gondi">Gondi</option>
+        </select>
+        <button onclick="testNews()">Get News</button>
+        <div id="newsResult"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://hlk4vx4dcg.execute-api.us-east-1.amazonaws.com/prod';
+
+        async function testLanguage() {
+            const text = document.getElementById('langText').value;
+            const result = document.getElementById('langResult');
+            result.innerHTML = '<div class="loading">⏳ Detecting language...</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/detect-language`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await response.json();
+                result.innerHTML = `<div class="result">✅ ${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="result">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testAI() {
+            const query = document.getElementById('aiQuery').value;
+            const result = document.getElementById('aiResult');
+            result.innerHTML = '<div class="loading">⏳ AI is thinking... (Cost: ~$0.004)</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/cultural-assistant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query,
+                        language: 'hindi',
+                        userId: 'demo-user',
+                        sessionId: 'demo-' + Date.now()
+                    })
+                });
+                const data = await response.json();
+                result.innerHTML = `<div class="result">✅ ${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="result">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testNews() {
+            const language = document.getElementById('newsLang').value;
+            const result = document.getElementById('newsResult');
+            result.innerHTML = '<div class="loading">⏳ Fetching news...</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/news`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ language, category: 'government' })
+                });
+                const data = await response.json();
+                result.innerHTML = `<div class="result">✅ ${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="result">❌ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

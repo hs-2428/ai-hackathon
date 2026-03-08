@@ -90,7 +90,7 @@ class TribalAppStack extends cdk.Stack {
     const culturalAssistantFn = new lambda.Function(this, 'CulturalAssistant', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset('backend/lambda/cultural-assistant'),
+      code: lambda.Code.fromAsset('../backend/lambda/cultural-assistant'),
       timeout: cdk.Duration.seconds(30),
       memorySize: 512,
       role: lambdaRole,
@@ -104,7 +104,7 @@ class TribalAppStack extends cdk.Stack {
     const textToSpeechFn = new lambda.Function(this, 'TextToSpeech', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset('backend/lambda/text-to-speech'),
+      code: lambda.Code.fromAsset('../backend/lambda/text-to-speech'),
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
       role: lambdaRole,
@@ -116,7 +116,7 @@ class TribalAppStack extends cdk.Stack {
     const voiceProcessorFn = new lambda.Function(this, 'VoiceProcessor', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset('backend/lambda/voice-processor'),
+      code: lambda.Code.fromAsset('../backend/lambda/voice-processor'),
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
       role: lambdaRole,
@@ -129,7 +129,7 @@ class TribalAppStack extends cdk.Stack {
     const languageDetectorFn = new lambda.Function(this, 'LanguageDetector', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset('backend/lambda/language-detector'),
+      code: lambda.Code.fromAsset('../backend/lambda/language-detector'),
       timeout: cdk.Duration.seconds(15),
       memorySize: 256,
       role: lambdaRole
@@ -138,7 +138,7 @@ class TribalAppStack extends cdk.Stack {
     const newsAggregatorFn = new lambda.Function(this, 'NewsAggregator', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset('backend/lambda/news-aggregator'),
+      code: lambda.Code.fromAsset('../backend/lambda/news-aggregator'),
       timeout: cdk.Duration.seconds(60),
       memorySize: 512,
       role: lambdaRole,
@@ -185,6 +185,7 @@ class TribalAppStack extends cdk.Stack {
 
     const news = api.root.addResource('news');
     news.addMethod('POST', new apigateway.LambdaIntegration(newsAggregatorFn));
+    news.addMethod('GET', new apigateway.LambdaIntegration(newsAggregatorFn));
 
     // Outputs
     new cdk.CfnOutput(this, 'APIEndpoint', {

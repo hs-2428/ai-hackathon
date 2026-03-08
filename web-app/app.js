@@ -1,5 +1,8 @@
 // Configuration
-const API_URL = 'http://localhost:3002'; // Change to your API Gateway URL for AWS
+// Auto-detect if running locally or on AWS
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3002'
+    : 'https://hlk4vx4dcg.execute-api.us-east-1.amazonaws.com/prod';
 let selectedLanguage = 'santali';
 let currentResponse = '';
 let recognition = null;
@@ -80,8 +83,11 @@ async function handleAskQuestion() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                query: question,
                 question: question,
-                language: selectedLanguage
+                language: selectedLanguage,
+                userId: 'web-user-' + Date.now(),
+                sessionId: 'session-' + Date.now()
             })
         });
         
@@ -91,7 +97,8 @@ async function handleAskQuestion() {
         
         const assistantData = await assistantResponse.json();
         
-        currentResponse = assistantData.answer || 'No answer received';
+        // Handle both local and AWS response formats
+        currentResponse = assistantData.answer || assistantData.response || 'No answer received';
         document.getElementById('responseText').textContent = currentResponse;
         document.getElementById('responseBox').classList.add('show');
         document.getElementById('speakBtn').disabled = false;
@@ -153,19 +160,41 @@ async function loadNews() {
     newsFeed.innerHTML = '<div class="news-item"><div class="news-title">Loading news...</div></div>';
     
     try {
-        const response = await fetch(`${API_URL}/news?language=${selectedLanguage}`);
+        // Try POST first (AWS), fallback to GET (local)
+        let response;
+        try {
+            response = await fetch(`${API_URL}/news`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    language: selectedLanguage,
+                    category: 'general',
+                    limit: 10
+                })
+            });
+        } catch (e) {
+            // Fallback to GET for local server
+            response = await fetch(`${API_URL}/news?language=${selectedLanguage}`);
+        }
+        
         const data = await response.json();
         
-        if (data.articles && data.articles.length > 0) {
-            newsFeed.innerHTML = data.articles.map(article => `
+        // Handle both local and AWS response formats
+        const articles = data.articles || data.news || [];
+        
+        if (articles && articles.length > 0) {
+            newsFeed.innerHTML = articles.map(article => {
+                // Handle both formats
+                const newsItem = article.adapted || article;
+                return `
                 <div class="news-item">
-                    <div class="news-title">${article.title}</div>
-                    <div class="news-content">${article.content}</div>
+                    <div class="news-title">${newsItem.title || article.title}</div>
+                    <div class="news-content">${newsItem.content || article.content}</div>
                     <div class="news-meta">
-                        ${article.category} • ${article.date}
+                        ${article.category || 'General'} • ${article.date || new Date().toLocaleDateString()}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         } else {
             newsFeed.innerHTML = '<div class="news-item"><div class="news-title">No news available</div></div>';
         }

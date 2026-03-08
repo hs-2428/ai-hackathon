@@ -12,15 +12,16 @@ let synthesis = window.speechSynthesis;
 document.addEventListener('DOMContentLoaded', () => {
     initializeLanguageSelector();
     initializeVoiceAssistant();
+    initializeDetection();
     loadNews();
-    
+
     // Check for Web Speech API support
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
-        
+
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             console.log('Voice transcript:', transcript);
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Auto-submit after voice input
             setTimeout(() => handleAskQuestion(), 500);
         };
-        
+
         recognition.onerror = (event) => {
             showStatus('Voice input error: ' + event.error, 'error');
             document.getElementById('voiceBtn').textContent = '🎤 Start Voice Input';
@@ -48,13 +49,71 @@ function initializeLanguageSelector() {
     const langButtons = document.querySelectorAll('.lang-btn');
     langButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            langButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            selectedLanguage = btn.dataset.lang;
-            showStatus(`Language changed to ${selectedLanguage}`, 'success');
-            loadNews(); // Reload news in selected language
+            setLanguage(btn.dataset.lang);
         });
     });
+}
+
+function setLanguage(lang) {
+    const langButtons = document.querySelectorAll('.lang-btn');
+    langButtons.forEach(btn => {
+        if (btn.dataset.lang === lang) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    selectedLanguage = lang;
+    showStatus(`Language changed to ${selectedLanguage}`, 'success');
+    loadNews();
+}
+
+// Language Detection
+function initializeDetection() {
+    const detectBtn = document.getElementById('detectBtn');
+    if (detectBtn) {
+        detectBtn.addEventListener('click', handleDetectLanguage);
+    }
+}
+
+async function handleDetectLanguage() {
+    const text = document.getElementById('detectInput').value.trim();
+    if (!text) {
+        showStatus('Please enter some text to detect', 'error');
+        return;
+    }
+
+    const resultDiv = document.getElementById('detectionResult');
+    resultDiv.textContent = 'Detecting...';
+
+    try {
+        const response = await fetch(`${API_URL}/detect-language`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) throw new Error('Detection failed');
+
+        const data = await response.json();
+        const detection = data.detection;
+
+        if (detection && detection.language) {
+            resultDiv.innerHTML = `Detected: <strong>${detection.language.toUpperCase()}</strong> (${Math.round(detection.confidence * 100)}%)`;
+
+            // Automatically select the language if we support it
+            const supportedLangs = ['santali', 'gondi', 'bhili', 'kurukh', 'munda', 'khasi', 'mizo', 'bodo', 'hindi', 'english'];
+            if (supportedLangs.includes(detection.language.toLowerCase())) {
+                setTimeout(() => setLanguage(detection.language.toLowerCase()), 1000);
+            }
+        } else {
+            resultDiv.textContent = 'Language not identified';
+        }
+    } catch (error) {
+        console.error('Detection error:', error);
+        resultDiv.textContent = 'Error identifying language';
+        showStatus('Detection error: ' + error.message, 'error');
+    }
 }
 
 // Voice Assistant
@@ -73,10 +132,10 @@ async function handleAskQuestion() {
         showStatus('Please enter a question', 'error');
         return;
     }
-    
+
     showStatus('Processing your question...', 'info');
     document.getElementById('responseBox').classList.remove('show');
-    
+
     try {
         // Get cultural assistant response with selected language
         const assistantResponse = await fetch(`${API_URL}/cultural-assistant`, {
@@ -90,19 +149,19 @@ async function handleAskQuestion() {
                 sessionId: 'session-' + Date.now()
             })
         });
-        
+
         if (!assistantResponse.ok) {
             throw new Error('Failed to get response');
         }
-        
+
         const assistantData = await assistantResponse.json();
-        
+
         // Handle both local and AWS response formats
         currentResponse = assistantData.answer || assistantData.response || 'No answer received';
         document.getElementById('responseText').textContent = currentResponse;
         document.getElementById('responseBox').classList.add('show');
         document.getElementById('speakBtn').disabled = false;
-        
+
         showStatus('Answer received!', 'success');
     } catch (error) {
         showStatus('Error: ' + error.message, 'error');
@@ -115,7 +174,7 @@ function handleVoiceInput() {
         showStatus('Voice input not supported in this browser', 'error');
         return;
     }
-    
+
     const voiceBtn = document.getElementById('voiceBtn');
     if (voiceBtn.classList.contains('recording')) {
         recognition.stop();
@@ -132,25 +191,25 @@ function handleVoiceInput() {
 
 function handleSpeakAnswer() {
     if (!currentResponse) return;
-    
+
     if (synthesis.speaking) {
         synthesis.cancel();
         document.getElementById('speakBtn').textContent = '🔊 Speak Answer';
         return;
     }
-    
+
     const utterance = new SpeechSynthesisUtterance(currentResponse);
     utterance.lang = getLanguageCode(selectedLanguage);
     utterance.rate = 0.9;
-    
+
     utterance.onstart = () => {
         document.getElementById('speakBtn').textContent = '⏹️ Stop Speaking';
     };
-    
+
     utterance.onend = () => {
         document.getElementById('speakBtn').textContent = '🔊 Speak Answer';
     };
-    
+
     synthesis.speak(utterance);
 }
 
@@ -158,7 +217,7 @@ function handleSpeakAnswer() {
 async function loadNews() {
     const newsFeed = document.getElementById('newsFeed');
     newsFeed.innerHTML = '<div class="news-item"><div class="news-title">Loading news...</div></div>';
-    
+
     try {
         // Try POST first (AWS), fallback to GET (local)
         let response;
@@ -166,7 +225,7 @@ async function loadNews() {
             response = await fetch(`${API_URL}/news`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     language: selectedLanguage,
                     category: 'general',
                     limit: 10
@@ -176,12 +235,12 @@ async function loadNews() {
             // Fallback to GET for local server
             response = await fetch(`${API_URL}/news?language=${selectedLanguage}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Handle both local and AWS response formats
         const articles = data.articles || data.news || [];
-        
+
         if (articles && articles.length > 0) {
             newsFeed.innerHTML = articles.map(article => {
                 // Handle both formats
@@ -221,6 +280,9 @@ function getLanguageCode(language) {
         'bhili': 'hi-IN',
         'kurukh': 'hi-IN',
         'munda': 'hi-IN',
+        'khasi': 'en-IN',
+        'mizo': 'en-IN',
+        'bodo': 'hi-IN',
         'hindi': 'hi-IN',
         'english': 'en-US'
     };

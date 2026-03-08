@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,40 +11,48 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
+
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             text-align: center;
         }
+
         .header h1 {
             font-size: 28px;
             margin-bottom: 10px;
         }
+
         .header p {
             opacity: 0.9;
             font-size: 14px;
         }
+
         .content {
             padding: 30px;
         }
+
         .section {
             margin-bottom: 30px;
         }
+
         .section-title {
             font-size: 18px;
             font-weight: 600;
@@ -53,11 +62,13 @@
             align-items: center;
             gap: 10px;
         }
+
         .language-selector {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
+
         .lang-btn {
             padding: 10px 20px;
             border: 2px solid #667eea;
@@ -68,23 +79,28 @@
             font-size: 14px;
             transition: all 0.3s;
         }
+
         .lang-btn:hover {
             background: #667eea;
             color: white;
         }
+
         .lang-btn.active {
             background: #667eea;
             color: white;
         }
+
         .voice-section {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
+
         .input-group {
             display: flex;
             gap: 10px;
         }
+
         .text-input {
             flex: 1;
             padding: 15px;
@@ -92,10 +108,12 @@
             border-radius: 10px;
             font-size: 14px;
         }
+
         .text-input:focus {
             outline: none;
             border-color: #667eea;
         }
+
         .btn {
             padding: 15px 30px;
             border: none;
@@ -105,24 +123,30 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .btn-primary {
             background: #667eea;
             color: white;
         }
+
         .btn-primary:hover {
             background: #5568d3;
         }
+
         .btn-secondary {
             background: #48bb78;
             color: white;
         }
+
         .btn-secondary:hover {
             background: #38a169;
         }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+
         .response-box {
             background: #f7fafc;
             border: 2px solid #e0e0e0;
@@ -131,17 +155,21 @@
             min-height: 100px;
             display: none;
         }
+
         .response-box.show {
             display: block;
         }
+
         .response-text {
             color: #333;
             line-height: 1.6;
         }
+
         .news-feed {
             display: grid;
             gap: 15px;
         }
+
         .news-item {
             background: #f7fafc;
             border: 2px solid #e0e0e0;
@@ -149,74 +177,113 @@
             padding: 20px;
             transition: all 0.3s;
         }
+
         .news-item:hover {
             border-color: #667eea;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
         }
+
         .news-title {
             font-weight: 600;
             color: #333;
             margin-bottom: 10px;
         }
+
         .news-content {
             color: #666;
             font-size: 14px;
             line-height: 1.6;
         }
+
         .news-meta {
             margin-top: 10px;
             font-size: 12px;
             color: #999;
         }
+
         .status {
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 15px;
             display: none;
         }
+
         .status.show {
             display: block;
         }
+
         .status.success {
             background: #c6f6d5;
             color: #22543d;
         }
+
         .status.error {
             background: #fed7d7;
             color: #742a2a;
         }
+
         .status.info {
             background: #bee3f8;
             color: #2c5282;
         }
+
         .recording {
             animation: pulse 1.5s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>🌍 Tribal Language Assistant</h1>
             <p>Voice & Text Support for Tribal Communities (AWS Deployed)</p>
         </div>
-        
+
         <div class="content">
             <!-- Language Selection -->
             <div class="section">
                 <div class="section-title">🗣️ Select Your Language</div>
-                <div class="language-selector">
+                <div class="language-selector" id="languageSelector">
                     <button class="lang-btn active" data-lang="santali">Santali (संताली)</button>
                     <button class="lang-btn" data-lang="gondi">Gondi (गोंडी)</button>
                     <button class="lang-btn" data-lang="bhili">Bhili (भीली)</button>
                     <button class="lang-btn" data-lang="kurukh">Kurukh (कुड़ुख)</button>
                     <button class="lang-btn" data-lang="munda">Munda (मुंडा)</button>
+                    <button class="lang-btn" data-lang="khasi">Khasi (खासी)</button>
+                    <button class="lang-btn" data-lang="mizo">Mizo (मिज़ो)</button>
+                    <button class="lang-btn" data-lang="bodo">Bodo (बोडो)</button>
                     <button class="lang-btn" data-lang="hindi">Hindi (हिंदी)</button>
                     <button class="lang-btn" data-lang="english">English</button>
+                </div>
+            </div>
+
+            <!-- Language Detection -->
+            <div class="section">
+                <div class="section-title">🔍 Auto Language Detection</div>
+                <div class="voice-section">
+                    <div class="input-group">
+                        <textarea class="text-input" id="detectInput"
+                            placeholder="Paste some tribal text here to detect its language..." rows="2"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <button class="btn btn-secondary" id="detectBtn">Identify Language</button>
+                        <div id="detectionResult"
+                            style="margin-left: 10px; display: flex; align-items: center; font-weight: 600; color: #667eea;">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -226,7 +293,8 @@
                 <div class="status" id="status"></div>
                 <div class="voice-section">
                     <div class="input-group">
-                        <input type="text" class="text-input" id="questionInput" placeholder="Type your question here...">
+                        <input type="text" class="text-input" id="questionInput"
+                            placeholder="Type your question here...">
                         <button class="btn btn-primary" id="askBtn">Ask</button>
                     </div>
                     <div class="input-group">
@@ -253,7 +321,9 @@
 
     <script>
         // Configuration - AWS Deployed
-        const API_URL = 'https://hlk4vx4dcg.execute-api.us-east-1.amazonaws.com/prod';
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3002'
+            : 'https://hlk4vx4dcg.execute-api.us-east-1.amazonaws.com/prod';
         let selectedLanguage = 'santali';
         let currentResponse = '';
         let recognition = null;
@@ -263,15 +333,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeLanguageSelector();
             initializeVoiceAssistant();
+            initializeDetection();
             loadNews();
-            
+
             // Check for Web Speech API support
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
                 recognition.continuous = false;
                 recognition.interimResults = false;
-                
+
                 recognition.onresult = (event) => {
                     const transcript = event.results[0][0].transcript;
                     console.log('Voice transcript:', transcript);
@@ -281,7 +352,7 @@
                     document.getElementById('voiceBtn').classList.remove('recording');
                     setTimeout(() => handleAskQuestion(), 500);
                 };
-                
+
                 recognition.onerror = (event) => {
                     showStatus('Voice input error: ' + event.error, 'error');
                     document.getElementById('voiceBtn').textContent = '🎤 Start Voice Input';
@@ -298,13 +369,68 @@
             const langButtons = document.querySelectorAll('.lang-btn');
             langButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    langButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    selectedLanguage = btn.dataset.lang;
-                    showStatus(`Language changed to ${selectedLanguage}`, 'success');
-                    loadNews();
+                    setLanguage(btn.dataset.lang);
                 });
             });
+        }
+
+        function setLanguage(lang) {
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            selectedLanguage = lang;
+            showStatus(`Language changed to ${selectedLanguage}`, 'success');
+            loadNews();
+        }
+
+        // Language Detection
+        function initializeDetection() {
+            document.getElementById('detectBtn').addEventListener('click', handleDetectLanguage);
+        }
+
+        async function handleDetectLanguage() {
+            const text = document.getElementById('detectInput').value.trim();
+            if (!text) {
+                showStatus('Please enter some text to detect', 'error');
+                return;
+            }
+
+            const resultDiv = document.getElementById('detectionResult');
+            resultDiv.textContent = 'Detecting...';
+
+            try {
+                const response = await fetch(`${API_URL}/detect-language`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                if (!response.ok) throw new Error('Detection failed');
+
+                const data = await response.json();
+                const detection = data.detection;
+
+                if (detection && detection.language) {
+                    resultDiv.innerHTML = `Detected: <strong>${detection.language.toUpperCase()}</strong> (${Math.round(detection.confidence * 100)}%)`;
+
+                    // Automatically select the language if we support it
+                    const supportedLangs = ['santali', 'gondi', 'bhili', 'kurukh', 'munda', 'khasi', 'mizo', 'bodo', 'hindi', 'english'];
+                    if (supportedLangs.includes(detection.language.toLowerCase())) {
+                        setTimeout(() => setLanguage(detection.language.toLowerCase()), 1000);
+                    }
+                } else {
+                    resultDiv.textContent = 'Language not identified';
+                }
+            } catch (error) {
+                console.error('Detection error:', error);
+                resultDiv.textContent = 'Error identifying language';
+                showStatus('Detection error: ' + error.message, 'error');
+            }
         }
 
         // Voice Assistant
@@ -323,10 +449,10 @@
                 showStatus('Please enter a question', 'error');
                 return;
             }
-            
+
             showStatus('Processing your question...', 'info');
             document.getElementById('responseBox').classList.remove('show');
-            
+
             try {
                 const assistantResponse = await fetch(`${API_URL}/cultural-assistant`, {
                     method: 'POST',
@@ -339,17 +465,17 @@
                         sessionId: 'session-' + Date.now()
                     })
                 });
-                
+
                 if (!assistantResponse.ok) {
                     throw new Error('Failed to get response');
                 }
-                
+
                 const assistantData = await assistantResponse.json();
                 currentResponse = assistantData.answer || assistantData.response || 'No answer received';
                 document.getElementById('responseText').textContent = currentResponse;
                 document.getElementById('responseBox').classList.add('show');
                 document.getElementById('speakBtn').disabled = false;
-                
+
                 showStatus('Answer received!', 'success');
             } catch (error) {
                 showStatus('Error: ' + error.message, 'error');
@@ -362,7 +488,7 @@
                 showStatus('Voice input not supported in this browser', 'error');
                 return;
             }
-            
+
             const voiceBtn = document.getElementById('voiceBtn');
             if (voiceBtn.classList.contains('recording')) {
                 recognition.stop();
@@ -379,25 +505,25 @@
 
         function handleSpeakAnswer() {
             if (!currentResponse) return;
-            
+
             if (synthesis.speaking) {
                 synthesis.cancel();
                 document.getElementById('speakBtn').textContent = '🔊 Speak Answer';
                 return;
             }
-            
+
             const utterance = new SpeechSynthesisUtterance(currentResponse);
             utterance.lang = getLanguageCode(selectedLanguage);
             utterance.rate = 0.9;
-            
+
             utterance.onstart = () => {
                 document.getElementById('speakBtn').textContent = '⏹️ Stop Speaking';
             };
-            
+
             utterance.onend = () => {
                 document.getElementById('speakBtn').textContent = '🔊 Speak Answer';
             };
-            
+
             synthesis.speak(utterance);
         }
 
@@ -405,14 +531,14 @@
         async function loadNews() {
             const newsFeed = document.getElementById('newsFeed');
             newsFeed.innerHTML = '<div class="news-item"><div class="news-title">Loading news...</div></div>';
-            
+
             try {
                 let response;
                 try {
                     response = await fetch(`${API_URL}/news`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
+                        body: JSON.stringify({
                             language: selectedLanguage,
                             category: 'general',
                             limit: 10
@@ -421,10 +547,10 @@
                 } catch (e) {
                     response = await fetch(`${API_URL}/news?language=${selectedLanguage}`);
                 }
-                
+
                 const data = await response.json();
                 const articles = data.articles || data.news || [];
-                
+
                 if (articles && articles.length > 0) {
                     newsFeed.innerHTML = articles.map(article => {
                         const newsItem = article.adapted || article;
@@ -463,6 +589,9 @@
                 'bhili': 'hi-IN',
                 'kurukh': 'hi-IN',
                 'munda': 'hi-IN',
+                'khasi': 'en-IN',
+                'mizo': 'en-IN',
+                'bodo': 'hi-IN',
                 'hindi': 'hi-IN',
                 'english': 'en-US'
             };
@@ -470,4 +599,5 @@
         }
     </script>
 </body>
+
 </html>

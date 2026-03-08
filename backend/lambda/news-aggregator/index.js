@@ -120,6 +120,33 @@ const sampleNews = {
             date: new Date(Date.now() - 172800000).toLocaleDateString('hi-IN')
         }
     ],
+    khasi: [
+        {
+            id: 'news-1',
+            title: 'Khasi Language Day Celebration',
+            content: 'Celebration of Khasi language and culture in Shillong with various events.',
+            category: 'Culture',
+            date: new Date().toLocaleDateString()
+        }
+    ],
+    mizo: [
+        {
+            id: 'news-1',
+            title: 'Mizo Cultural Festival',
+            content: 'Annual Mizo cultural festival showcasing traditional dance and music.',
+            category: 'Festival',
+            date: new Date().toLocaleDateString()
+        }
+    ],
+    bodo: [
+        {
+            id: 'news-1',
+            title: 'Bodo Literature Award',
+            content: 'Bodo writers honored for their contribution to Bodo literature.',
+            category: 'Literature',
+            date: new Date().toLocaleDateString()
+        }
+    ],
     hindi: [
         {
             id: 'news-1',
@@ -170,11 +197,11 @@ const sampleNews = {
 
 exports.handler = async (event) => {
     console.log('Event:', JSON.stringify(event));
-    
+
     try {
         // Handle both GET and POST requests
         let language, category, limit;
-        
+
         if (event.httpMethod === 'GET' || event.requestContext?.http?.method === 'GET') {
             language = event.queryStringParameters?.language || 'santali';
             category = event.queryStringParameters?.category || 'general';
@@ -185,9 +212,9 @@ exports.handler = async (event) => {
             category = body.category || 'general';
             limit = body.limit || 10;
         }
-        
+
         console.log('Fetching news for language:', language);
-        
+
         // Try to fetch from DynamoDB cache first
         try {
             const cachedNews = await dynamodb.query({
@@ -198,7 +225,7 @@ exports.handler = async (event) => {
                 Limit: limit,
                 ScanIndexForward: false
             }).promise();
-            
+
             if (cachedNews.Items && cachedNews.Items.length > 0) {
                 console.log('Returning cached news');
                 return {
@@ -220,17 +247,17 @@ exports.handler = async (event) => {
         } catch (err) {
             console.log('Cache miss or error:', err.message);
         }
-        
+
         // Try to fetch from S3
         try {
             const newsData = await s3.getObject({
                 Bucket: process.env.NEWS_BUCKET,
                 Key: `sample-news/${language}-news.json`
             }).promise();
-            
+
             const newsArticles = JSON.parse(newsData.Body.toString());
             console.log('Returning S3 news');
-            
+
             return {
                 statusCode: 200,
                 headers: {
@@ -249,11 +276,11 @@ exports.handler = async (event) => {
         } catch (err) {
             console.log('S3 fetch failed:', err.message);
         }
-        
+
         // Fallback to sample news
         const news = sampleNews[language] || sampleNews.hindi;
         console.log('Returning sample news');
-        
+
         return {
             statusCode: 200,
             headers: {
@@ -279,7 +306,7 @@ exports.handler = async (event) => {
                 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 error: error.message,
                 articles: [],
                 news: []

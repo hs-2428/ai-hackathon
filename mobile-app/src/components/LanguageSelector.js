@@ -6,6 +6,7 @@ const LANGUAGES = [
   { code: 'gondi', name: 'Gondi (गोंडी)', flag: '🌳' },
   { code: 'bhili', name: 'Bhili (भीली)', flag: '🏞️' },
   { code: 'kurukh', name: 'Kurukh (कुड़ुख)', flag: '⛰️' },
+  { code: 'munda', name: 'Munda (मुंडा)', flag: '🏹' },
   { code: 'khasi', name: 'Khasi', flag: '🌄' },
   { code: 'mizo', name: 'Mizo', flag: '🏔️' },
   { code: 'bodo', name: 'Bodo (बड़ो)', flag: '🌾' },

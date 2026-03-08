@@ -1,107 +1,472 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tribal Language AI Assistant - Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribal Language Assistant - AWS Deployed</title>
     <style>
-        body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
-        h1 { color: #1565C0; }
-        .test-section { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
-        button { background: #1565C0; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background: #0d47a1; }
-        .result { background: white; padding: 15px; margin-top: 10px; border-left: 4px solid #4CAF50; white-space: pre-wrap; }
-        .loading { color: #FF6F00; }
-        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .lang-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .lang-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .voice-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .text-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .response-box {
+            background: #f7fafc;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 100px;
+            display: none;
+        }
+        .response-box.show {
+            display: block;
+        }
+        .response-text {
+            color: #333;
+            line-height: 1.6;
+        }
+        .news-feed {
+            display: grid;
+            gap: 15px;
+        }
+        .news-item {
+            background: #f7fafc;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .news-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .news-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .news-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .news-meta {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .status.show {
+            display: block;
+        }
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .status.info {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        .recording {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
-    <h1>🎯 Tribal Language AI Assistant</h1>
-    <p>Live demo of AI-powered voice assistant for tribal communities</p>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Tribal Language Assistant</h1>
+            <p>Voice & Text Support for Tribal Communities (AWS Deployed)</p>
+        </div>
+        
+        <div class="content">
+            <!-- Language Selection -->
+            <div class="section">
+                <div class="section-title">🗣️ Select Your Language</div>
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="santali">Santali (संताली)</button>
+                    <button class="lang-btn" data-lang="gondi">Gondi (गोंडी)</button>
+                    <button class="lang-btn" data-lang="bhili">Bhili (भीली)</button>
+                    <button class="lang-btn" data-lang="kurukh">Kurukh (कुड़ुख)</button>
+                    <button class="lang-btn" data-lang="munda">Munda (मुंडा)</button>
+                    <button class="lang-btn" data-lang="hindi">Hindi (हिंदी)</button>
+                    <button class="lang-btn" data-lang="english">English</button>
+                </div>
+            </div>
 
-    <div class="test-section">
-        <h2>1. Language Detection</h2>
-        <input type="text" id="langText" placeholder="Enter text in any language (e.g., नमस्ते)" value="नमस्ते, मुझे सरकारी योजनाओं के बारे में बताएं">
-        <button onclick="testLanguage()">Detect Language</button>
-        <div id="langResult"></div>
-    </div>
+            <!-- Voice Assistant -->
+            <div class="section">
+                <div class="section-title">🎤 Voice & Text Assistant</div>
+                <div class="status" id="status"></div>
+                <div class="voice-section">
+                    <div class="input-group">
+                        <input type="text" class="text-input" id="questionInput" placeholder="Type your question here...">
+                        <button class="btn btn-primary" id="askBtn">Ask</button>
+                    </div>
+                    <div class="input-group">
+                        <button class="btn btn-secondary" id="voiceBtn">🎤 Start Voice Input</button>
+                        <button class="btn btn-primary" id="speakBtn" disabled>🔊 Speak Answer</button>
+                    </div>
+                    <div class="response-box" id="responseBox">
+                        <div class="response-text" id="responseText"></div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="test-section">
-        <h2>2. AI Cultural Assistant</h2>
-        <textarea id="aiQuery" rows="3" placeholder="Ask a question...">What education scholarships are available for tribal students?</textarea>
-        <button onclick="testAI()">Ask AI Assistant</button>
-        <div id="aiResult"></div>
-    </div>
-
-    <div class="test-section">
-        <h2>3. News Aggregator</h2>
-        <select id="newsLang">
-            <option value="santali">Santali</option>
-            <option value="hindi">Hindi</option>
-            <option value="gondi">Gondi</option>
-        </select>
-        <button onclick="testNews()">Get News</button>
-        <div id="newsResult"></div>
+            <!-- News Feed -->
+            <div class="section">
+                <div class="section-title">📰 Latest News</div>
+                <div class="news-feed" id="newsFeed">
+                    <div class="news-item">
+                        <div class="news-title">Loading news...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const API_URL = 'https://b52h5hjcc6.execute-api.us-east-1.amazonaws.com/prod';
+        // Configuration - AWS Deployed
+        const API_URL = 'https://hlk4vx4dcg.execute-api.us-east-1.amazonaws.com/prod';
+        let selectedLanguage = 'santali';
+        let currentResponse = '';
+        let recognition = null;
+        let synthesis = window.speechSynthesis;
 
-        async function testLanguage() {
-            const text = document.getElementById('langText').value;
-            const result = document.getElementById('langResult');
-            result.innerHTML = '<div class="loading">⏳ Detecting language...</div>';
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLanguageSelector();
+            initializeVoiceAssistant();
+            loadNews();
             
-            try {
-                const response = await fetch(`${API_URL}/detect-language`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-                const data = await response.json();
-                result.innerHTML = `<div class="result">✅ ${JSON.stringify(data, null, 2)}</div>`;
-            } catch (error) {
-                result.innerHTML = `<div class="result">❌ Error: ${error.message}</div>`;
+            // Check for Web Speech API support
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    console.log('Voice transcript:', transcript);
+                    document.getElementById('questionInput').value = transcript;
+                    showStatus('Voice input received: ' + transcript, 'success');
+                    document.getElementById('voiceBtn').textContent = '🎤 Start Voice Input';
+                    document.getElementById('voiceBtn').classList.remove('recording');
+                    setTimeout(() => handleAskQuestion(), 500);
+                };
+                
+                recognition.onerror = (event) => {
+                    showStatus('Voice input error: ' + event.error, 'error');
+                    document.getElementById('voiceBtn').textContent = '🎤 Start Voice Input';
+                    document.getElementById('voiceBtn').classList.remove('recording');
+                };
+            } else {
+                document.getElementById('voiceBtn').disabled = true;
+                document.getElementById('voiceBtn').textContent = '🎤 Voice Not Supported';
             }
+        });
+
+        // Language Selector
+        function initializeLanguageSelector() {
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    langButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedLanguage = btn.dataset.lang;
+                    showStatus(`Language changed to ${selectedLanguage}`, 'success');
+                    loadNews();
+                });
+            });
         }
 
-        async function testAI() {
-            const query = document.getElementById('aiQuery').value;
-            const result = document.getElementById('aiResult');
-            result.innerHTML = '<div class="loading">⏳ AI is thinking... (Cost: ~$0.004)</div>';
+        // Voice Assistant
+        function initializeVoiceAssistant() {
+            document.getElementById('askBtn').addEventListener('click', handleAskQuestion);
+            document.getElementById('questionInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleAskQuestion();
+            });
+            document.getElementById('voiceBtn').addEventListener('click', handleVoiceInput);
+            document.getElementById('speakBtn').addEventListener('click', handleSpeakAnswer);
+        }
+
+        async function handleAskQuestion() {
+            const question = document.getElementById('questionInput').value.trim();
+            if (!question) {
+                showStatus('Please enter a question', 'error');
+                return;
+            }
+            
+            showStatus('Processing your question...', 'info');
+            document.getElementById('responseBox').classList.remove('show');
             
             try {
-                const response = await fetch(`${API_URL}/cultural-assistant`, {
+                const assistantResponse = await fetch(`${API_URL}/cultural-assistant`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        query,
-                        language: 'hindi',
-                        userId: 'demo-user',
-                        sessionId: 'demo-' + Date.now()
+                        query: question,
+                        question: question,
+                        language: selectedLanguage,
+                        userId: 'web-user-' + Date.now(),
+                        sessionId: 'session-' + Date.now()
                     })
                 });
-                const data = await response.json();
-                result.innerHTML = `<div class="result">✅ ${JSON.stringify(data, null, 2)}</div>`;
+                
+                if (!assistantResponse.ok) {
+                    throw new Error('Failed to get response');
+                }
+                
+                const assistantData = await assistantResponse.json();
+                currentResponse = assistantData.answer || assistantData.response || 'No answer received';
+                document.getElementById('responseText').textContent = currentResponse;
+                document.getElementById('responseBox').classList.add('show');
+                document.getElementById('speakBtn').disabled = false;
+                
+                showStatus('Answer received!', 'success');
             } catch (error) {
-                result.innerHTML = `<div class="result">❌ Error: ${error.message}</div>`;
+                showStatus('Error: ' + error.message, 'error');
+                console.error('Error:', error);
             }
         }
 
-        async function testNews() {
-            const language = document.getElementById('newsLang').value;
-            const result = document.getElementById('newsResult');
-            result.innerHTML = '<div class="loading">⏳ Fetching news...</div>';
+        function handleVoiceInput() {
+            if (!recognition) {
+                showStatus('Voice input not supported in this browser', 'error');
+                return;
+            }
+            
+            const voiceBtn = document.getElementById('voiceBtn');
+            if (voiceBtn.classList.contains('recording')) {
+                recognition.stop();
+                voiceBtn.textContent = '🎤 Start Voice Input';
+                voiceBtn.classList.remove('recording');
+            } else {
+                recognition.lang = getLanguageCode(selectedLanguage);
+                recognition.start();
+                voiceBtn.textContent = '⏹️ Stop Recording';
+                voiceBtn.classList.add('recording');
+                showStatus('Listening...', 'info');
+            }
+        }
+
+        function handleSpeakAnswer() {
+            if (!currentResponse) return;
+            
+            if (synthesis.speaking) {
+                synthesis.cancel();
+                document.getElementById('speakBtn').textContent = '🔊 Speak Answer';
+                return;
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(currentResponse);
+            utterance.lang = getLanguageCode(selectedLanguage);
+            utterance.rate = 0.9;
+            
+            utterance.onstart = () => {
+                document.getElementById('speakBtn').textContent = '⏹️ Stop Speaking';
+            };
+            
+            utterance.onend = () => {
+                document.getElementById('speakBtn').textContent = '🔊 Speak Answer';
+            };
+            
+            synthesis.speak(utterance);
+        }
+
+        // News Feed
+        async function loadNews() {
+            const newsFeed = document.getElementById('newsFeed');
+            newsFeed.innerHTML = '<div class="news-item"><div class="news-title">Loading news...</div></div>';
             
             try {
-                const response = await fetch(`${API_URL}/news`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ language, category: 'government' })
-                });
+                let response;
+                try {
+                    response = await fetch(`${API_URL}/news`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            language: selectedLanguage,
+                            category: 'general',
+                            limit: 10
+                        })
+                    });
+                } catch (e) {
+                    response = await fetch(`${API_URL}/news?language=${selectedLanguage}`);
+                }
+                
                 const data = await response.json();
-                result.innerHTML = `<div class="result">✅ ${JSON.stringify(data, null, 2)}</div>`;
+                const articles = data.articles || data.news || [];
+                
+                if (articles && articles.length > 0) {
+                    newsFeed.innerHTML = articles.map(article => {
+                        const newsItem = article.adapted || article;
+                        return `
+                        <div class="news-item">
+                            <div class="news-title">${newsItem.title || article.title}</div>
+                            <div class="news-content">${newsItem.content || article.content}</div>
+                            <div class="news-meta">
+                                ${article.category || 'General'} • ${article.date || new Date().toLocaleDateString()}
+                            </div>
+                        </div>
+                    `}).join('');
+                } else {
+                    newsFeed.innerHTML = '<div class="news-item"><div class="news-title">No news available</div></div>';
+                }
             } catch (error) {
-                result.innerHTML = `<div class="result">❌ Error: ${error.message}</div>`;
+                newsFeed.innerHTML = '<div class="news-item"><div class="news-title">Error loading news</div></div>';
+                console.error('Error loading news:', error);
             }
+        }
+
+        // Utility Functions
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status show ${type}`;
+            setTimeout(() => {
+                status.classList.remove('show');
+            }, 3000);
+        }
+
+        function getLanguageCode(language) {
+            const codes = {
+                'santali': 'hi-IN',
+                'gondi': 'hi-IN',
+                'bhili': 'hi-IN',
+                'kurukh': 'hi-IN',
+                'munda': 'hi-IN',
+                'hindi': 'hi-IN',
+                'english': 'en-US'
+            };
+            return codes[language] || 'en-US';
         }
     </script>
 </body>

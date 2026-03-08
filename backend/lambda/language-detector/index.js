@@ -13,8 +13,11 @@ const TRIBAL_LANGUAGES = {
 };
 
 exports.handler = async (event) => {
+    console.log('Event:', JSON.stringify(event));
+    
     try {
-        const { text, sessionId } = JSON.parse(event.body);
+        const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+        const { text, sessionId } = body;
         
         // Use Bedrock Claude for language detection with cultural context
         const prompt = `Analyze this text and identify if it's from an Indian tribal language. 
@@ -32,7 +35,7 @@ Respond in JSON format:
 }`;
 
         const response = await bedrock.invokeModel({
-            modelId: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+            modelId: 'us.anthropic.claude-3-5-sonnet-v2:0',
             contentType: 'application/json',
             accept: 'application/json',
             body: JSON.stringify({
@@ -50,6 +53,12 @@ Respond in JSON format:
         
         return {
             statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
             body: JSON.stringify({
                 sessionId,
                 detection: detectionResult,
@@ -60,6 +69,12 @@ Respond in JSON format:
         console.error('Error:', error);
         return {
             statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
             body: JSON.stringify({ error: error.message })
         };
     }

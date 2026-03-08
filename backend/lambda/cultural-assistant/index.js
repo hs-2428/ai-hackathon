@@ -3,51 +3,122 @@ const bedrock = new AWS.BedrockRuntime();
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
+// Rich cultural knowledge responses for tribal languages
+const culturalResponses = {
+    santali: {
+        scholarship: 'संताली छात्रन खातिर पोस्ट मैट्रिक छात्रवृत्ति मिलेला। राष्ट्रीय छात्रवृत्ति पोर्टल (scholarships.gov.in) पर आवेदन करीं। ऊंच पढ़ाई खातिर 50,000 रुपिया साल भर मिलेगा। संताली भाषा अउ संस्कृति के पढ़ाई खातिर विशेष छात्रवृत्ति भी हवय।',
+        health: 'आयुष्मान भारत योजना म संताली परिवारन ला 5 लाख रुपिया तक मुफ्त इलाज मिलथे। नजदीक के स्वास्थ्य केंद्र म नाम लिखावीं। संताली गांवन म विशेष स्वास्थ्य शिविर लगथे।',
+        farming: 'पीएम-किसान योजना म संताली किसानन ला 6,000 रुपिया साल भर मिलथे। कृषि कार्यालय म पंजीकरण करावीं। जंगल के उपज खातिर न्यूनतम समर्थन मूल्य भी मिलथे।',
+        default: 'हम संताली समुदाय खातिर सरकारी योजना, स्वास्थ्य, पढ़ाई, खेती, अधिकार, राशन, शिकायत अउ संस्कृति के जानकारी दे सकत हन। अपन सवाल पूछीं।'
+    },
+    gondi: {
+        scholarship: 'गोंडी विद्यार्थियन खातिर पोस्ट मैट्रिक छात्रवृत्ति मिलथे। राष्ट्रीय छात्रवृत्ति पोर्टल (scholarships.gov.in) म आवेदन करव। ऊंच पढ़ाई खातिर 50,000 रुपिया हर साल मिलही।',
+        health: 'आयुष्मान भारत योजना म गोंडी परिवारन ला 5 लाख रुपिया तक मुफ्त इलाज मिलथे। नजदीक के स्वास्थ्य केंद्र म नाम लिखाव।',
+        farming: 'पीएम-किसान योजना म गोंडी किसानन ला 6,000 रुपिया साल भर मिलथे। कृषि कार्यालय म पंजीकरण कराव।',
+        default: 'हम गोंडी समुदाय खातिर सरकारी योजना, स्वास्थ्य, पढ़ाई, खेती, अधिकार के जानकारी दे सकत हन।'
+    },
+    hindi: {
+        scholarship: 'अनुसूचित जनजाति छात्रों के लिए पोस्ट मैट्रिक छात्रवृत्ति उपलब्ध है। राष्ट्रीय छात्रवृत्ति पोर्टल (scholarships.gov.in) पर आवेदन करें। उच्च शिक्षा के लिए 50,000 रुपये प्रति वर्ष की वित्तीय सहायता मिलती है।',
+        health: 'आयुष्मान भारत योजना में आदिवासी परिवारों को 5 लाख रुपये तक का मुफ्त स्वास्थ्य बीमा मिलता है। नजदीकी स्वास्थ्य केंद्र में पंजीकरण कराएं।',
+        farming: 'पीएम-किसान योजना में किसानों को 6,000 रुपये प्रति वर्ष मिलते हैं। स्थानीय कृषि कार्यालय में पंजीकरण कराएं या pmkisan.gov.in पर जाएं।',
+        default: 'मैं सरकारी योजनाओं, स्वास्थ्य सेवाओं, शिक्षा छात्रवृत्ति, कृषि सहायता, अधिकार के बारे में जानकारी दे सकता हूं।'
+    },
+    english: {
+        scholarship: 'Post Matric Scholarship for Scheduled Tribe students is available. Apply through National Scholarship Portal (scholarships.gov.in). Financial assistance up to Rs.50,000 per year is provided for higher education.',
+        health: 'Ayushman Bharat scheme provides free health insurance up to Rs.5 lakh for tribal families. Visit your nearest health center for enrollment.',
+        farming: 'PM-KISAN scheme provides Rs.6,000 per year to farmers. Register at your local agriculture office or visit pmkisan.gov.in.',
+        default: 'I can help you with information about government schemes, health services, education scholarships, agricultural support, and tribal rights.'
+    }
+};
+
+function getQuickResponse(query, language) {
+    const q = query.toLowerCase();
+    const responses = culturalResponses[language] || culturalResponses.hindi;
+    
+    if (q.includes('scholarship') || q.includes('छात्रवृत्ति') || q.includes('education') || q.includes('शिक्षा') || q.includes('student')) {
+        return responses.scholarship;
+    } else if (q.includes('health') || q.includes('स्वास्थ्य') || q.includes('hospital') || q.includes('doctor') || q.includes('ayushman')) {
+        return responses.health;
+    } else if (q.includes('farm') || q.includes('खेती') || q.includes('agriculture') || q.includes('किसान') || q.includes('kisan')) {
+        return responses.farming;
+    }
+    
+    return null;
+}
+
 exports.handler = async (event) => {
+    console.log('Event:', JSON.stringify(event));
+    
     try {
-        const { query, language, userId, sessionId, culturalContext } = JSON.parse(event.body);
+        const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+        const { query, question, language, userId, sessionId, culturalContext } = body;
         
-        // Fetch cultural knowledge base from S3
-        const knowledgeBase = await s3.getObject({
-            Bucket: process.env.KNOWLEDGE_BUCKET,
-            Key: `cultural-kb/${language}/knowledge.json`
-        }).promise();
+        const userQuery = query || question || '';
+        const userLanguage = language || 'hindi';
+        const user = userId || 'anonymous-' + Date.now();
+        const session = sessionId || 'session-' + Date.now();
         
-        const culturalKnowledge = JSON.parse(knowledgeBase.Body.toString());
+        console.log('Query:', userQuery, 'Language:', userLanguage);
         
-        // Get user history for context
-        const userHistory = await dynamodb.query({
-            TableName: process.env.SESSIONS_TABLE,
-            KeyConditionExpression: 'userId = :uid',
-            ExpressionAttributeValues: { ':uid': userId },
-            Limit: 5,
-            ScanIndexForward: false
-        }).promise();
+        // Try quick response first
+        const quickResponse = getQuickResponse(userQuery, userLanguage);
+        if (quickResponse) {
+            console.log('Using quick response');
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                },
+                body: JSON.stringify({
+                    response: quickResponse,
+                    answer: quickResponse,
+                    language: userLanguage,
+                    sessionId: session,
+                    timestamp: Date.now(),
+                    source: 'quick-response'
+                })
+            };
+        }
+        
+        // Fetch cultural knowledge base from S3 if available
+        let culturalKnowledge = {};
+        try {
+            const knowledgeBase = await s3.getObject({
+                Bucket: process.env.KNOWLEDGE_BUCKET,
+                Key: `cultural-knowledge/${userLanguage}/knowledge.json`
+            }).promise();
+            culturalKnowledge = JSON.parse(knowledgeBase.Body.toString());
+        } catch (err) {
+            console.log('No cultural knowledge found, using defaults');
+        }
         
         // Build culturally-aware prompt
         const systemPrompt = `You are a helpful assistant for tribal communities in India. 
-Language: ${language}
+Language: ${userLanguage}
 Cultural Context: ${culturalContext || 'General tribal community'}
-Knowledge Base: ${JSON.stringify(culturalKnowledge.commonTopics)}
 
 Provide responses that:
 1. Respect cultural traditions and practices
-2. Use simple, accessible language
+2. Use simple, accessible language in ${userLanguage}
 3. Include relevant government schemes and benefits
 4. Consider local context and needs
-5. Provide practical, actionable information`;
+5. Provide practical, actionable information
+6. Keep responses concise (max 200 words)`;
 
         const response = await bedrock.invokeModel({
-            modelId: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+            modelId: 'us.anthropic.claude-3-5-sonnet-v2:0',
             contentType: 'application/json',
             accept: 'application/json',
             body: JSON.stringify({
                 anthropic_version: 'bedrock-2023-05-31',
-                max_tokens: 2000,
+                max_tokens: 1000,
                 system: systemPrompt,
                 messages: [{
                     role: 'user',
-                    content: query
+                    content: userQuery
                 }]
             })
         }).promise();
@@ -56,34 +127,62 @@ Provide responses that:
         const assistantResponse = result.content[0].text;
         
         // Log interaction
-        await dynamodb.put({
-            TableName: process.env.INTERACTIONS_TABLE,
-            Item: {
-                interactionId: `${sessionId}-${Date.now()}`,
-                userId,
-                sessionId,
-                timestamp: Date.now(),
-                query,
-                response: assistantResponse,
-                language,
-                culturalContext
-            }
-        }).promise();
+        try {
+            await dynamodb.put({
+                TableName: process.env.INTERACTIONS_TABLE,
+                Item: {
+                    interactionId: `${session}-${Date.now()}`,
+                    userId: user,
+                    sessionId: session,
+                    timestamp: Date.now(),
+                    query: userQuery,
+                    response: assistantResponse,
+                    language: userLanguage,
+                    culturalContext,
+                    ttl: Math.floor(Date.now() / 1000) + 2592000 // 30 days
+                }
+            }).promise();
+        } catch (err) {
+            console.log('Failed to log interaction:', err);
+        }
         
         return {
             statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
             body: JSON.stringify({
                 response: assistantResponse,
-                language,
-                sessionId,
-                timestamp: Date.now()
+                answer: assistantResponse,
+                language: userLanguage,
+                sessionId: session,
+                timestamp: Date.now(),
+                source: 'bedrock-ai'
             })
         };
     } catch (error) {
         console.error('Error:', error);
+        
+        // Fallback response
+        const fallbackResponses = culturalResponses[event.body?.language || 'hindi'];
         return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message })
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: JSON.stringify({
+                response: fallbackResponses.default,
+                answer: fallbackResponses.default,
+                language: event.body?.language || 'hindi',
+                error: error.message,
+                source: 'fallback'
+            })
         };
     }
 };
